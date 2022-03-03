@@ -1,9 +1,11 @@
 package com.puzzlegame.numbergo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -20,7 +22,7 @@ public class Levels extends AppCompatActivity {
 
     TextView levelsLabel;
 
-    Button[][] levelsBtns;
+    Button[][] levels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,36 +39,60 @@ public class Levels extends AppCompatActivity {
         RelativeLayout.LayoutParams levelsLabelParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         levelsLabelParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         levelsLabelParams.topMargin = 30;
-        levelsLabelParams.bottomMargin = 10;
+        levelsLabelParams.bottomMargin = 40;
 
         relLay.addView(levelsLabel, levelsLabelParams);
 
         scrlView = new ScrollView(this);
-        scrlView.setFillViewport(true);
+        scrlView.setPadding(30, 30 , 30, 30);
+        scrlView.setBackgroundColor(Color.BLACK);
+
+        RelativeLayout gridRelLay = new RelativeLayout(this);
+        gridRelLay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        gridRelLay.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        scrlView.addView(gridRelLay);
 
         grid = new GridLayout(this);
         grid.setId(View.generateViewId());
-        grid.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
-        grid.setColumnCount(4);
-        grid.setRowCount(4);
+        grid.setColumnCount(3);
+        grid.setRowCount(15);
 
-        levelsBtns = new Button[4][4];
+        levels = new Button[15][3];
         int level = 1;
 
-        for(int i = 0; i < levelsBtns.length; i++) {
-            for(int j = 0; j < levelsBtns[0].length; j++) {
-                levelsBtns[i][j] = new Button(this);
-                levelsBtns[i][j].setText(level + "");
+        RelativeLayout.LayoutParams levelParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        for(int i = 0; i < levels.length; i++) {
+            for(int j = 0; j < levels[0].length; j++) {
+                levels[i][j] = new Button(this);
+                levels[i][j].setText(level + "");
+                levels[i][j].setTextSize(25);
+                levels[i][j].setTextColor(Color.WHITE);
+                levels[i][j].setBackground(ContextCompat.getDrawable(this, R.drawable.custom_level_bg));
+                levels[i][j].setPadding(30, 0, 30, 0);
                 level++;
 
-                grid.addView(levelsBtns[i][j]);
+                if(i > 0) {
+                    levelParams.topMargin = 20;
+                }
+
+                if(j > 0) {
+                    levelParams.leftMargin = 20;
+                } else {
+                    levelParams.leftMargin = 0;
+                }
+
+                grid.addView(levels[i][j], levelParams);
             }
         }
 
-        scrlView.addView(grid);
+        gridRelLay.addView(grid);
 
-        RelativeLayout.LayoutParams scrlViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams scrlViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        scrlViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         scrlViewParams.addRule(RelativeLayout.BELOW, levelsLabel.getId());
+        scrlViewParams.bottomMargin = 20;
 
         relLay.addView(scrlView, scrlViewParams);
 
