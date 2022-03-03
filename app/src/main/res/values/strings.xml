@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NumberGo</string>
+
+    <string name="numbergo">Number Go</string>
+    <string name="levels">Levels</string>
+    <string name="store">Store</string>
+    <string name="settings">Settings</string>
+</resources>
