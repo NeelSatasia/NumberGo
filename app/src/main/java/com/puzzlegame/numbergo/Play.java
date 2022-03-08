@@ -30,7 +30,7 @@ public class Play extends AppCompatActivity {
     View line;
 
     Button[] options;
-    String[] optionsDirection;
+    String[] optionsAction;
     int optionsLength = 4;
 
     GridLayout numOptionsGrid;
@@ -41,7 +41,7 @@ public class Play extends AppCompatActivity {
     int previousCurrentNumOptionRowIndex = -1;
     int previousCurrentNumOptionColIndex = -1;
     int currentNumSelected;
-    String currentDirectionSelected;
+    String currentActionSelected;
 
     int startingX;
     int startingY;
@@ -99,6 +99,7 @@ public class Play extends AppCompatActivity {
                 boxes[i][j] = new Button(this);
                 boxes[i][j].setTextSize(30);
                 boxes[i][j].setTextColor(Color.BLACK);
+                boxActions[i][j] = "";
 
                 if(i == randRowPosition && j == randColPosition) {
                     boxes[i][j].setBackgroundResource(R.drawable.bluecoloredbox);
@@ -130,12 +131,12 @@ public class Play extends AppCompatActivity {
                 int j2 = j;
 
                 boxes[i][j].setOnClickListener(view -> {
-                    if(isNumSelected && boxes[i2][j2].getText().toString().isEmpty()) {
+                    if(isNumSelected && boxActions[i2][j2].isEmpty()) {
                         nums[i2][j2] = currentNumSelected;
                         boxes[i2][j2].setText(currentNumSelected + "");
-                        options[currentNumOptionRowIndex].setText("");
+                        boxActions[i2][j2] = currentActionSelected;
 
-                        switch (currentDirectionSelected) {
+                        switch (currentActionSelected) {
                             case "left":
                                 boxes[i2][j2].setBackgroundResource(R.drawable.leftwhitecoloredbox);
                                 break;
@@ -150,18 +151,25 @@ public class Play extends AppCompatActivity {
                                 break;
                         }
 
-                        boxActions[i2][j2] = currentDirectionSelected;
-
                         isNumSelected = false;
 
-                        options[currentNumOptionRowIndex].setBackgroundResource(R.drawable.whitecoloredbox);
-                        optionsDirection[currentNumOptionRowIndex] = "";
+                        if(currentNumOptionColIndex == -1) {
+                            options[currentNumOptionRowIndex].setText("");
+                            options[currentNumOptionRowIndex].setBackgroundResource(R.drawable.whitecoloredbox);
+                            optionsAction[currentNumOptionRowIndex] = "";
+                        } else {
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.whitecoloredbox);
+                            boxActions[currentNumOptionRowIndex][currentNumOptionColIndex] = "";
+                            nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
+                        }
+
                         currentNumOptionRowIndex = -1;
                         currentNumOptionColIndex = -1;
-                    } else if(!boxes[i2][j2].getText().toString().isEmpty()) {
+                    } else if(!boxActions[i2][j2].isEmpty()) {
                         isNumSelected = true;
                         currentNumSelected = nums[i2][j2];
-                        currentDirectionSelected = boxActions[i2][j2];
+                        currentActionSelected = boxActions[i2][j2];
 
                         currentNumOptionRowIndex = i2;
                         currentNumOptionColIndex = j2;
@@ -201,7 +209,7 @@ public class Play extends AppCompatActivity {
         relLay.addView(line, lineParams);
 
         options = new Button[optionsLength];
-        optionsDirection = new String[optionsLength];
+        optionsAction = new String[optionsLength];
 
         numOptionsGrid = new GridLayout(this);
         numOptionsGrid.setRowCount(2);
@@ -222,13 +230,8 @@ public class Play extends AppCompatActivity {
 
             int i2 = i;
             options[i].setOnClickListener(view -> {
-                if(isNumSelected && options[i2].getText().toString().isEmpty()) {
-                    options[i2].setText(currentNumSelected + "");
-
-                    nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
-                    boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
-
-                    switch (currentDirectionSelected) {
+                if(isNumSelected && optionsAction[i2].isEmpty()) {
+                    switch (currentActionSelected) {
                         case "left":
                             options[i2].setBackgroundResource(R.drawable.leftwhitecoloredbox);
                             break;
@@ -243,19 +246,29 @@ public class Play extends AppCompatActivity {
                             break;
                     }
 
-                    optionsDirection[i2] = currentDirectionSelected;
+                    options[i2].setText(currentNumSelected + "");
+                    optionsAction[i2] = currentActionSelected;
 
-                    boxActions[currentNumOptionRowIndex][currentNumOptionColIndex] = "";
+                    if(currentNumOptionColIndex == -1) {
+                        options[currentNumOptionRowIndex].setText("");
+                        optionsAction[currentNumOptionRowIndex] = "";
+                        options[currentNumOptionRowIndex].setBackgroundResource(R.drawable.whitecoloredbox);
+                    } else {
+                        nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
+                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.whitecoloredbox);
+                        boxActions[currentNumOptionRowIndex][currentNumOptionColIndex] = "";
+                    }
 
                     currentNumOptionRowIndex = -1;
                     currentNumOptionColIndex = -1;
 
                     isNumSelected = false;
-                } else if(!options[i2].getText().toString().isEmpty()) {
+                } else if(!optionsAction[i2].isEmpty()) {
                     isNumSelected = true;
 
                     currentNumSelected = Integer.parseInt(options[i2].getText().toString());
-                    currentDirectionSelected = optionsDirection[i2];
+                    currentActionSelected = optionsAction[i2];
 
                     currentNumOptionRowIndex = i2;
                     currentNumOptionColIndex = -1;
@@ -265,19 +278,19 @@ public class Play extends AppCompatActivity {
 
         options[0].setText("2");
         options[0].setBackgroundResource(R.drawable.downwhitecoloredbox);
-        optionsDirection[0] = "down";
+        optionsAction[0] = "down";
 
         options[1].setText("1");
         options[1].setBackgroundResource(R.drawable.rightwhitecoloredbox);
-        optionsDirection[1] = "right";
+        optionsAction[1] = "right";
 
         options[2].setText("1");
         options[2].setBackgroundResource(R.drawable.downwhitecoloredbox);
-        optionsDirection[2] = "down";
+        optionsAction[2] = "down";
 
         options[3].setText("1");
         options[3].setBackgroundResource(R.drawable.rightwhitecoloredbox);
-        optionsDirection[3] = "right";
+        optionsAction[3] = "right";
 
         RelativeLayout.LayoutParams numoptionsgridParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         numoptionsgridParams.addRule(RelativeLayout.BELOW, line.getId());
