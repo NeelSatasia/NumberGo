@@ -25,8 +25,6 @@ public class Play extends AppCompatActivity {
     int[][] nums;
     String[][] boxActions;
 
-    Button startBtn;
-
     View line;
 
     Button[] options;
@@ -54,6 +52,8 @@ public class Play extends AppCompatActivity {
     String currentDirection;
 
     boolean puzzleSolved = false;
+
+    int currentLevel = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +86,6 @@ public class Play extends AppCompatActivity {
         int randRowPosition = 3;
         int randColPosition = 2;
 
-        startingX = 0;
-        startingY = 0;
         endingX = randColPosition;
         endingY = randRowPosition;
 
@@ -104,8 +102,6 @@ public class Play extends AppCompatActivity {
                 if(i == randRowPosition && j == randColPosition) {
                     boxes[i][j].setBackgroundResource(R.drawable.bluecoloredbox);
                     boxActions[i][j] = "target";
-                } else if(i == startingY && j == startingX){
-                    boxes[i][j].setBackgroundResource(R.drawable.greencoloredbox);
                 } else {
                     boxes[i][j].setBackgroundResource(R.drawable.whitecoloredbox);
                 }
@@ -175,6 +171,30 @@ public class Play extends AppCompatActivity {
                         currentNumOptionColIndex = j2;
                     }
                 });
+
+                boxes[i][j].setOnLongClickListener(view -> {
+                    for(int i1 = 0; i1 < boxes.length; i1++) {
+                        for(int j1 = 0; j1 < boxes[0].length; j1++) {
+                            boxes[i1][j1].setEnabled(false);
+                            boxes[i1][j1].setText("");
+
+                            if(i1 != endingY || j1 != endingX) {
+                                boxes[i1][j1].setBackgroundResource(R.drawable.whitecoloredbox);
+                            }
+                        }
+                    }
+
+                    startingX = j2;
+                    startingY = i2;
+
+                    currentNumOptionRowIndex = startingY;
+                    currentNumOptionColIndex = startingX;
+
+                    currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
+                    currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
+                    startTimer();
+                    return true;
+                });
             }
         }
 
@@ -186,33 +206,25 @@ public class Play extends AppCompatActivity {
 
         relLay.addView(gridLayout, gridParams);
 
-        startBtn = new Button(this);
-        startBtn.setText(getString(R.string.start));
-        startBtn.setTextSize(25);
-        startBtn.setId(View.generateViewId());
-
-        RelativeLayout.LayoutParams startBtnParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        startBtnParams.addRule(RelativeLayout.BELOW, gridLayout.getId());
-        startBtnParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        startBtnParams.bottomMargin = 20;
-
-        relLay.addView(startBtn, startBtnParams);
-
         line = new View(this);
         line.setBackgroundColor(Color.BLUE);
         line.setId(View.generateViewId());
 
         RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 10);
-        lineParams.addRule(RelativeLayout.BELOW, startBtn.getId());
+        lineParams.addRule(RelativeLayout.BELOW, gridLayout.getId());
         lineParams.bottomMargin = 30;
 
         relLay.addView(line, lineParams);
+
+        if(currentLevel >= 1 && currentLevel <= 5) {
+            optionsLength = 4;
+        }
 
         options = new Button[optionsLength];
         optionsAction = new String[optionsLength];
 
         numOptionsGrid = new GridLayout(this);
-        numOptionsGrid.setRowCount(2);
+        numOptionsGrid.setRowCount(optionsLength/4);
         numOptionsGrid.setColumnCount(4);
 
         RelativeLayout.LayoutParams numoptionsParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -276,48 +288,13 @@ public class Play extends AppCompatActivity {
             });
         }
 
-        options[0].setText("2");
-        options[0].setBackgroundResource(R.drawable.downwhitecoloredbox);
-        optionsAction[0] = "down";
-
-        options[1].setText("1");
-        options[1].setBackgroundResource(R.drawable.rightwhitecoloredbox);
-        optionsAction[1] = "right";
-
-        options[2].setText("1");
-        options[2].setBackgroundResource(R.drawable.downwhitecoloredbox);
-        optionsAction[2] = "down";
-
-        options[3].setText("1");
-        options[3].setBackgroundResource(R.drawable.rightwhitecoloredbox);
-        optionsAction[3] = "right";
+        level_1();
 
         RelativeLayout.LayoutParams numoptionsgridParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         numoptionsgridParams.addRule(RelativeLayout.BELOW, line.getId());
         numoptionsgridParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         relLay.addView(numOptionsGrid, numoptionsgridParams);
-
-        startBtn.setOnClickListener(view -> {
-            for(int i = 0; i < boxes.length; i++) {
-                for(int j = 0; j < boxes[0].length; j++) {
-                    boxes[i][j].setEnabled(false);
-                    boxes[i][j].setText("");
-
-                    if(i != endingY || j != endingX) {
-                        boxes[i][j].setBackgroundResource(R.drawable.whitecoloredbox);
-                    }
-                }
-            }
-
-            currentNumOptionRowIndex = startingY;
-            currentNumOptionColIndex = startingX;
-
-            currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
-            currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
-
-            startTimer();
-        });
 
         setContentView(relLay);
     }
@@ -381,12 +358,29 @@ public class Play extends AppCompatActivity {
             @Override
             public void onFinish() {
                 timer.cancel();
-
-                startBtn.setEnabled(false);
             }
         };
 
         timer.start();
 
     }
+
+    public void level_1() {
+        options[0].setText("2");
+        options[0].setBackgroundResource(R.drawable.downwhitecoloredbox);
+        optionsAction[0] = "down";
+
+        options[1].setText("1");
+        options[1].setBackgroundResource(R.drawable.rightwhitecoloredbox);
+        optionsAction[1] = "right";
+
+        options[2].setText("1");
+        options[2].setBackgroundResource(R.drawable.downwhitecoloredbox);
+        optionsAction[2] = "down";
+
+        options[3].setText("1");
+        options[3].setBackgroundResource(R.drawable.rightwhitecoloredbox);
+        optionsAction[3] = "right";
+    }
+
 }

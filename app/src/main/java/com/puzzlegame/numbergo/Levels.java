@@ -22,18 +22,20 @@ public class Levels extends AppCompatActivity {
 
     ScrollView scrlView;
     RelativeLayout relLay;
-    TableLayout grid;
-    TableRow[] tableRows;
 
     TextView levelsLabel;
 
-    Button[][] levels;
+    Button[] levels;
+    GridLayout grid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        scrlView = new ScrollView(this);
+
         relLay = new RelativeLayout(this);
+        scrlView.addView(relLay);
 
         levelsLabel = new TextView(this);
         levelsLabel.setText(getString(R.string.levels));
@@ -48,72 +50,42 @@ public class Levels extends AppCompatActivity {
 
         relLay.addView(levelsLabel, levelsLabelParams);
 
-        scrlView = new ScrollView(this);
-        scrlView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        scrlView.setPadding(30, 30 , 30, 30);
-
-        RelativeLayout gridRelLay = new RelativeLayout(this);
-        gridRelLay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-        gridRelLay.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        scrlView.addView(gridRelLay);
-
-        grid = new TableLayout(this);
+        grid = new GridLayout(this);
+        grid.setRowCount(15);
+        grid.setColumnCount(3);
         grid.setId(View.generateViewId());
 
-        tableRows = new TableRow[15];
+        levels = new Button[grid.getRowCount() * grid.getColumnCount()];
 
-        levels = new Button[tableRows.length][3];
-        int level = 1;
-
-        TableRow.LayoutParams levelParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams levelParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
         for(int i = 0; i < levels.length; i++) {
-            tableRows[i] = new TableRow(this);
-            tableRows[i].setGravity(Gravity.CENTER_HORIZONTAL);
+                levels[i] = new Button(this);
+                levels[i].setText((i + 1) + "");
+                levels[i].setTextSize(25);
+                levels[i].setTextColor(Color.WHITE);
+                levels[i].setBackgroundResource(R.drawable.custom_level_bg);
 
-            for(int j = 0; j < levels[0].length; j++) {
-                levels[i][j] = new Button(this);
-                levels[i][j].setText(level + "");
-                levels[i][j].setTextSize(25);
-                levels[i][j].setTextColor(Color.WHITE);
-                levels[i][j].setBackground(ContextCompat.getDrawable(this, R.drawable.custom_level_bg));
-
-                level++;
-
-                if(i > 0) {
+                if(i > 2) {
                     levelParams.topMargin = 30;
                 }
 
-                if(j > 0) {
-                    levelParams.leftMargin = 30;
-                } else {
-                    levelParams.leftMargin = 0;
-                }
+                levelParams.leftMargin = 30;
 
-                tableRows[i].addView(levels[i][j], levelParams);
-
-                levels[i][j].setOnClickListener(view -> {
+                levels[i].setOnClickListener(view -> {
                     Intent intent = new Intent(Levels.this, Play.class);
                     startActivity(intent);
                 });
-            }
 
-            grid.addView(tableRows[i]);
+            grid.addView(levels[i], levelParams);
         }
 
-        RelativeLayout.LayoutParams gridRelLayParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams gridRelLayParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        gridRelLayParams.addRule(RelativeLayout.BELOW, levelsLabel.getId());
         gridRelLayParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
-        gridRelLay.addView(grid, gridRelLayParams);
+        relLay.addView(grid, gridRelLayParams);
 
-        RelativeLayout.LayoutParams scrlViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        scrlViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        scrlViewParams.addRule(RelativeLayout.BELOW, levelsLabel.getId());
-        scrlViewParams.bottomMargin = 20;
-
-        relLay.addView(scrlView, scrlViewParams);
-
-        setContentView(relLay);
+        setContentView(scrlView);
     }
 }
