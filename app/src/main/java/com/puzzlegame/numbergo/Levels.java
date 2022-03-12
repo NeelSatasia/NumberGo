@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -25,7 +26,7 @@ public class Levels extends AppCompatActivity {
 
     TextView levelsLabel;
 
-    Button[] levels;
+    Button[][] levels;
     GridLayout grid;
 
     @Override
@@ -55,29 +56,42 @@ public class Levels extends AppCompatActivity {
         grid.setColumnCount(3);
         grid.setId(View.generateViewId());
 
-        levels = new Button[grid.getRowCount() * grid.getColumnCount()];
+        levels = new Button[grid.getRowCount()][grid.getColumnCount()];
+        int level = 1;
 
-        RelativeLayout.LayoutParams levelParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams levelParams = new RelativeLayout.LayoutParams(150, 140);
 
         for(int i = 0; i < levels.length; i++) {
-                levels[i] = new Button(this);
-                levels[i].setText((i + 1) + "");
-                levels[i].setTextSize(25);
-                levels[i].setTextColor(Color.WHITE);
-                levels[i].setBackgroundResource(R.drawable.custom_level_bg);
+            for(int j = 0; j < levels[0].length; j++) {
+                levels[i][j] = new Button(this);
+                levels[i][j].setText(level + "");
+                levels[i][j].setTextSize(25);
+                levels[i][j].setTextColor(Color.WHITE);
+                levels[i][j].setBackgroundResource(R.drawable.custom_level_bg);
 
-                if(i > 2) {
-                    levelParams.topMargin = 30;
+                if (i > 0) {
+                    levelParams.topMargin = 50;
                 }
 
-                levelParams.leftMargin = 30;
+                if(j > 0) {
+                    levelParams.leftMargin = 50;
+                } else {
+                    levelParams.leftMargin = 0;
+                }
 
-                levels[i].setOnClickListener(view -> {
+                int i2 = i;
+                int j2 = j;
+
+                levels[i][j].setOnClickListener(view -> {
                     Intent intent = new Intent(Levels.this, Play.class);
+                    intent.putExtra(getString(R.string.level), Integer.parseInt(levels[i2][j2].getText().toString()));
                     startActivity(intent);
                 });
 
-            grid.addView(levels[i], levelParams);
+                grid.addView(levels[i][j], levelParams);
+
+                level++;
+            }
         }
 
         RelativeLayout.LayoutParams gridRelLayParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
