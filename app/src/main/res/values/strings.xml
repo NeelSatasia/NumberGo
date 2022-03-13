@@ -24,4 +24,6 @@
     <string name="home">Home</string>
 
     <string name="level">Level</string>
+
+    <string name="failed_to_solve_puzzle_toast">Failed To Solve</string>
 </resources>
