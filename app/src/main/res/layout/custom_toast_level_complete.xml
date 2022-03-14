@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/custom_toast"
+    android:id="@+id/custom_toast_level_complete"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/try_again"
+        android:text="@string/level_complete"
         android:textSize="20dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/custom_toast_background"
+        android:background="@drawable/custom_greencoloredbox"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:layout_marginTop="20dp"
-        android:alpha="0.7"/>
+        android:layout_marginTop="20dp"/>
 
 </RelativeLayout>

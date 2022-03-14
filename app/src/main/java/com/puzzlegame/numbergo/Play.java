@@ -10,15 +10,12 @@ import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.time.Duration;
 
 public class Play extends AppCompatActivity {
 
@@ -82,8 +79,10 @@ public class Play extends AppCompatActivity {
     Button restartLevelBtn;
     Button nextLevelBtn;
 
-    LayoutInflater inflater;
-    View layout;
+    LayoutInflater tryAgainInflater;
+    LayoutInflater levelCompleteInflater;
+    View tryAgainLayout;
+    View levelCompleteLayout;
     Toast toast;
 
     @Override
@@ -93,12 +92,14 @@ public class Play extends AppCompatActivity {
         Intent intent = getIntent();
         currentLevel = intent.getIntExtra(getString(R.string.level), -1);
 
-        inflater = getLayoutInflater();
-        layout = inflater.inflate(R.layout.custom_toast_failed_to_solve_puzzle, findViewById(R.id.custom_toast));
+        tryAgainInflater = getLayoutInflater();
+        tryAgainLayout = tryAgainInflater.inflate(R.layout.custom_toast_try_again, findViewById(R.id.custom_toast_try_again));
+
+        levelCompleteInflater = getLayoutInflater();
+        levelCompleteLayout = levelCompleteInflater.inflate(R.layout.custom_toast_level_complete, findViewById(R.id.custom_toast_level_complete));
 
         toast = new Toast(getApplicationContext());
         toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
 
         relLay = new RelativeLayout(this);
         relLay.setBackgroundColor(Color.WHITE);
@@ -116,6 +117,8 @@ public class Play extends AppCompatActivity {
         restartBtn.setText(getString(R.string.restart));
         restartBtn.setTextColor(Color.WHITE);
         restartBtn.setBackgroundResource(R.drawable.custom_restart_background);
+
+        restartBtn.setOnClickListener(view -> restartCurrentLevel());
 
         LinearLayout.LayoutParams restartBtnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 95);
         restartBtnParams.bottomMargin = 20;
@@ -144,18 +147,26 @@ public class Play extends AppCompatActivity {
 
         switch(currentLevel) {
             case 1:
+                startingX = 1;
+                startingY = 0;
                 endingX = 2;
                 endingY = 2;
                 break;
             case 2:
+                startingX = 1;
+                startingY = 1;
                 endingX = 2;
                 endingY = 0;
                 break;
             case 3:
+                startingX = 3;
+                startingY = 1;
                 endingX = 1;
                 endingY = 1;
                 break;
-            case 4:
+            case 10:
+                startingX = 0;
+                startingY = 2;
                 endingX = 1;
                 endingY = 3;
                 break;
@@ -167,8 +178,9 @@ public class Play extends AppCompatActivity {
             for(int j = 0; j < boxes[0].length; j++) {
                 nums[i][j] = -1;
                 boxes[i][j] = new Button(this);
-                boxes[i][j].setTextSize(30);
-                boxes[i][j].setTextColor(Color.BLACK);
+                boxes[i][j].setTextSize(20);
+                boxes[i][j].setTextColor(Color.rgb(51, 51, 51));
+                boxes[i][j].setAllCaps(false);
                 boxActions[i][j] = "";
 
                 boxes[i][j].setBackgroundResource(R.drawable.custom_whitecoloredbox);
@@ -217,7 +229,11 @@ public class Play extends AppCompatActivity {
                                 optionsAction[currentNumOptionRowIndex] = "";
                                 optionsUsed++;
                             } else {
-                                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                                if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
+                                    boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText(getString(R.string.start));
+                                } else {
+                                    boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                                }
                                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                                 boxActions[currentNumOptionRowIndex][currentNumOptionColIndex] = "";
                                 nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
@@ -234,7 +250,7 @@ public class Play extends AppCompatActivity {
                             case "right":
                                 boxes[i2][j2].setText(currentNumSelected + "R");
                                 break;
-                            case "top":
+                            case "up":
                                 boxes[i2][j2].setText(currentNumSelected + "U");
                                 break;
                             case "down":
@@ -254,15 +270,15 @@ public class Play extends AppCompatActivity {
 
                         currentNumOptionRowIndex = -1;
                         currentNumOptionColIndex = -1;
-                    } else if(!boxActions[i2][j2].isEmpty()) {
+                    } else if(!boxActions[i2][j2].isEmpty() && !boxes[i2][j2].getText().toString().equals(getString(R.string.start))) {
                         isNumSelected = true;
                         currentNumSelected = nums[i2][j2];
                         currentActionSelected = boxActions[i2][j2];
 
                         if(boxActions[i2][j2].equals(getString(R.string.block))) {
-                            boxes[i2][j2].setBackgroundResource(R.drawable.custom_graycoloredbox_greenborder);
+                            boxes[i2][j2].setBackgroundResource(R.drawable.custom_graycoloredbox_blueborder);
                         } else {
-                            boxes[i2][j2].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                            boxes[i2][j2].setBackgroundResource(R.drawable.custom_whitecoloredbox_blueborder);
                         }
 
                         currentNumOptionRowIndex = i2;
@@ -271,10 +287,13 @@ public class Play extends AppCompatActivity {
                 });
 
                 boxes[i][j].setOnLongClickListener(view -> {
-                    if(optionsUsed == optionsLength) {
+                    if(optionsUsed == optionsLength && i2 == startingY && j2 == startingX && !boxes[i2][j2].getText().toString().equals(getString(R.string.start))) {
                         for (int i1 = 0; i1 < boxes.length; i1++) {
                             for (int j1 = 0; j1 < boxes[0].length; j1++) {
                                 boxes[i1][j1].setEnabled(false);
+                                if(i1 != endingY || j1 != endingX) {
+                                    boxes[i1][j1].setText("");
+                                }
                             }
                         }
 
@@ -317,7 +336,7 @@ public class Play extends AppCompatActivity {
             case 3:
                 optionsLength = 4;
                 break;
-            case 4:
+            case 10:
                 optionsLength = 3;
                 break;
         }
@@ -329,7 +348,6 @@ public class Play extends AppCompatActivity {
         numOptionsGrid = new GridLayout(this);
         numOptionsGrid.setRowCount(optionsLength/4);
         numOptionsGrid.setColumnCount(4);
-        numOptionsGrid.setBackgroundResource(R.drawable.custom_whitecoloredbox);
 
         LinearLayout.LayoutParams numOptionsParams = new LinearLayout.LayoutParams(BUTTON_WIDTH, BUTTON_HEIGHT);
         numOptionsParams.topMargin = 20;
@@ -338,7 +356,7 @@ public class Play extends AppCompatActivity {
 
         for(int i = 0; i < options.length; i++) {
             options[i] = new Button(this);
-            options[i].setTextSize(30);
+            options[i].setTextSize(20);
             options[i].setBackgroundResource(R.drawable.custom_whitecoloredbox);
 
             if(i == options.length - 1) {
@@ -377,7 +395,11 @@ public class Play extends AppCompatActivity {
                             options[currentNumOptionRowIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                         } else {
                             nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
-                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                            if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
+                                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText(getString(R.string.start));
+                            } else {
+                                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
+                            }
                             boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                             boxActions[currentNumOptionRowIndex][currentNumOptionColIndex] = "";
                             optionsUsed--;
@@ -391,8 +413,8 @@ public class Play extends AppCompatActivity {
                         case "right":
                             options[i2].setText(currentNumSelected + "R");
                             break;
-                        case "top":
-                            options[i2].setText(currentNumSelected + "T");
+                        case "up":
+                            options[i2].setText(currentNumSelected + "U");
                             break;
                         case "down":
                             options[i2].setText(currentNumSelected + "D");
@@ -421,9 +443,9 @@ public class Play extends AppCompatActivity {
                     currentActionSelected = optionsAction[i2];
 
                     if(optionsAction[i2].equals(getString(R.string.block))) {
-                        options[i2].setBackgroundResource(R.drawable.custom_graycoloredbox_greenborder);
+                        options[i2].setBackgroundResource(R.drawable.custom_graycoloredbox_blueborder);
                     } else {
-                        options[i2].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                        options[i2].setBackgroundResource(R.drawable.custom_whitecoloredbox_blueborder);
                     }
 
                     currentNumOptionRowIndex = i2;
@@ -497,31 +519,12 @@ public class Play extends AppCompatActivity {
                     boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                 }
 
-                switch (boxActions[currentActionRowIndex][currentActionColIndex]) {
-                    case "left":
-                        boxes[currentActionRowIndex][currentActionColIndex].setText(previousAction + "L");
-                        break;
-                    case "right":
-                        boxes[currentActionRowIndex][currentActionColIndex].setText(previousAction + "R");
-                        break;
-                    case "up":
-                        boxes[currentActionRowIndex][currentActionColIndex].setText(previousAction + "U");
-                        break;
-                    case "down":
-                        boxes[currentActionRowIndex][currentActionColIndex].setText(previousAction + "D");
-                        break;
-                }
-
-                if(previousAction == 0) {
-                    currentActionRowIndex = currentNumOptionRowIndex;
-                    currentActionColIndex = currentNumOptionColIndex;
-                }
-
-                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_redcoloredbox);
+                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_bluecoloredbox);
 
                 if(failedToSolvePuzzle) {
-                    timer.onFinish();
+                    timer.cancel();
 
+                    toast.setView(tryAgainLayout);
                     toast.show();
                 }
 
@@ -530,9 +533,6 @@ public class Play extends AppCompatActivity {
 
                 if(puzzleSolved) {
                     timer.onFinish();
-                    alertDialog.show();
-
-                    levelState.setText(getString(R.string.level_complete));
                 } else {
                     if (currentAction - 1 >= 0) {
                         switch (currentDirection) {
@@ -541,6 +541,19 @@ public class Play extends AppCompatActivity {
                                     if(!boxActions[currentNumOptionRowIndex][currentNumOptionColIndex - 1].equals(getString(R.string.block))) {
                                         currentNumOptionColIndex--;
                                     }
+
+                                    currentAction--;
+
+                                    if(currentNumOptionColIndex - 1 >= 0) {
+                                        if (boxActions[currentNumOptionRowIndex][currentNumOptionColIndex - 1].equals(getString(R.string.block))) {
+                                            currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                            currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                        }
+                                    }
+                                } else {
+                                    timer.cancel();
+                                    toast.setView(tryAgainLayout);
+                                    toast.show();
                                 }
                                 break;
                             case "right":
@@ -548,6 +561,19 @@ public class Play extends AppCompatActivity {
                                     if(!boxActions[currentNumOptionRowIndex][currentNumOptionColIndex + 1].equals(getString(R.string.block))) {
                                         currentNumOptionColIndex++;
                                     }
+
+                                    currentAction--;
+
+                                    if(currentNumOptionColIndex + 1 < boxes[0].length) {
+                                        if (boxActions[currentNumOptionRowIndex][currentNumOptionColIndex + 1].equals(getString(R.string.block))) {
+                                            currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                            currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                        }
+                                    }
+                                } else {
+                                    timer.cancel();
+                                    toast.setView(tryAgainLayout);
+                                    toast.show();
                                 }
                                 break;
                             case "up":
@@ -555,6 +581,19 @@ public class Play extends AppCompatActivity {
                                     if(!boxActions[currentNumOptionRowIndex - 1][currentNumOptionColIndex].equals(getString(R.string.block))) {
                                         currentNumOptionRowIndex--;
                                     }
+
+                                    currentAction--;
+
+                                    if(currentNumOptionRowIndex - 1 >= 0) {
+                                        if (boxActions[currentNumOptionRowIndex - 1][currentNumOptionColIndex].equals(getString(R.string.block))) {
+                                            currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                            currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                        }
+                                    }
+                                } else {
+                                    timer.cancel();
+                                    toast.setView(tryAgainLayout);
+                                    toast.show();
                                 }
                                 break;
                             case "down":
@@ -562,20 +601,28 @@ public class Play extends AppCompatActivity {
                                     if(!boxActions[currentNumOptionRowIndex + 1][currentNumOptionColIndex].equals(getString(R.string.block))) {
                                         currentNumOptionRowIndex++;
                                     }
+
+                                    currentAction--;
+
+                                    if(currentNumOptionRowIndex + 1 < boxes[0].length) {
+                                        if (boxActions[currentNumOptionRowIndex + 1][currentNumOptionColIndex].equals(getString(R.string.block))) {
+                                            currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                            currentDirection = boxActions[currentNumOptionRowIndex][currentNumOptionColIndex];
+                                        }
+                                    }
+                                } else {
+                                    timer.cancel();
+                                    toast.setView(tryAgainLayout);
+                                    toast.show();
                                 }
                                 break;
                         }
-
-                        currentAction--;
-                        previousAction = currentAction;
                     }
 
                     if (currentAction == 0) {
                         if (boxActions[currentNumOptionRowIndex][currentNumOptionColIndex].equals(getString(R.string.target))) {
                             if(optionsUsed == optionsLength) {
                                 puzzleSolved = true;
-                            } else {
-                                toast.show();
                             }
                         } else if (!boxActions[currentNumOptionRowIndex][currentNumOptionColIndex].isEmpty()) {
                             currentAction = nums[currentNumOptionRowIndex][currentNumOptionColIndex];
@@ -590,6 +637,9 @@ public class Play extends AppCompatActivity {
             @Override
             public void onFinish() {
                 timer.cancel();
+
+                toast.setView(levelCompleteLayout);
+                toast.show();
             }
         };
 
@@ -609,6 +659,9 @@ public class Play extends AppCompatActivity {
 
                 if(!boxActions.equals(getString(R.string.target))) {
                     boxes[i][j].setBackgroundResource(R.drawable.custom_whitecoloredbox);
+                    boxes[i][j].setEnabled(false);
+                } else {
+                    boxes[i][j].setEnabled(true);
                 }
 
                 nums[i][j] = -1;
@@ -632,12 +685,14 @@ public class Play extends AppCompatActivity {
     }
 
     public void setTargetPosition() {
-        boxes[endingY][endingX].setBackgroundResource(R.drawable.custom_bluecoloredbox);
+        boxes[endingY][endingX].setText(getString(R.string.end));
         boxes[endingY][endingX].setEnabled(false);
         boxActions[endingY][endingX] = getString(R.string.target);
     }
 
     public void levels() {
+        boxes[startingY][startingX].setText(getString(R.string.start));
+
         switch (currentLevel) {
             case 1:                                                     //1
                 optionNums[0] = 2;
@@ -650,8 +705,8 @@ public class Play extends AppCompatActivity {
                 break;
             case 2:                                                     //2
                 optionNums[0] = 1;
-                options[0].setText(optionNums[0] + "L");
-                optionsAction[0] = getString(R.string.left);
+                options[0].setText(optionNums[0] + "R");
+                optionsAction[0] = getString(R.string.right);
 
                 optionNums[1] = 1;
                 options[1].setText(optionNums[1] + "U");
@@ -666,7 +721,7 @@ public class Play extends AppCompatActivity {
                 options[1].setText(optionNums[1] + "U");
                 optionsAction[1] = getString(R.string.up);
 
-                optionNums[2] = 2;
+                optionNums[2] = 1;
                 options[2].setText(optionNums[2] + "L");
                 optionsAction[2] = getString(R.string.left);
 
@@ -674,12 +729,14 @@ public class Play extends AppCompatActivity {
                 options[3].setText(optionNums[3] + "L");
                 optionsAction[3] = getString(R.string.left);
                 break;
-            case 4:                                                     //4
+            case 10:                                                     //10
+                boxes[2][0].setText(getString(R.string.start));
+
                 optionNums[0] = 0;
                 options[0].setBackgroundResource(R.drawable.custom_graycoloredbox);
                 optionsAction[0] = getString(R.string.block);
 
-                optionNums[1] = 3;
+                optionNums[1] = 9;
                 options[1].setText(optionNums[1] + "R");
                 optionsAction[1] = getString(R.string.right);
 
