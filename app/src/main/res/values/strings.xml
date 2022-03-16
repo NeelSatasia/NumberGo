@@ -28,4 +28,9 @@
     <string name="failed_to_solve_puzzle_toast">Failed To Solve</string>
 
     <string name="end">End</string>
+
+    <string name="l">L</string>
+    <string name="r">R</string>
+    <string name="u">U</string>
+    <string name="d">D</string>
 </resources>

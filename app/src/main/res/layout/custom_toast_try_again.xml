@@ -16,7 +16,6 @@
         android:paddingBottom="7dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:layout_marginTop="20dp"
-        android:alpha="0.7"/>
+        android:layout_marginTop="20dp"/>
 
 </RelativeLayout>

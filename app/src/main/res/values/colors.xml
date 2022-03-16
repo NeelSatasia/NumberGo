@@ -10,8 +10,9 @@
     <color name="red">#ff0000</color>
     <color name="blue">#00b8e6</color>
     <color name="light_gray">#d9d9d9</color>
-    <color name="gray">#999999</color>
+    <color name="gray">#808080</color>
     <color name="green">#00FF7F</color>
+    <color name="dark_green">#29a329</color>
     <color name="orange_red">#FF4500</color>
     <color name="dark_blue">#0066ff</color>
     <color name="light_sky_blue">#87CEFA</color>

@@ -10,12 +10,10 @@
         android:text="@string/level_complete"
         android:textSize="20dp"
         android:textColor="@color/black"
-        android:layout_centerHorizontal="true"
         android:background="@drawable/custom_greencoloredbox"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:layout_marginTop="20dp"/>
+        android:paddingRight="20dp"/>
 
 </RelativeLayout>
