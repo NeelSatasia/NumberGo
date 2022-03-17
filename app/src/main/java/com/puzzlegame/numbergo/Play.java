@@ -1,6 +1,5 @@
 package com.puzzlegame.numbergo;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -127,7 +126,7 @@ public class Play extends AppCompatActivity {
         restartBtn.setOnClickListener(view -> restartCurrentLevel());
 
         level = new TextView(this);
-        level.setText(getString(R.string.level) + " " + currentLevel);
+        level.setText(String.format(getString(R.string.level), currentLevel + ""));
         level.setTextSize(40);
         level.setTextColor(Color.BLACK);
 
@@ -217,6 +216,31 @@ public class Play extends AppCompatActivity {
                 endingX = 2;
                 endingY = 2;
                 break;
+            case 13:
+                startingX = 0;
+                startingY = 1;
+                endingX = 1;
+                endingY = 2;
+                break;
+            case 14:
+                startingX = 0;
+                startingY = 0;
+                endingX = 1;
+                endingY = 0;
+                break;
+            case 15:
+            case 16:
+                startingX = 0;
+                startingY = 0;
+                endingX = 0;
+                endingY = 1;
+                break;
+            case 17:
+                startingX = 1;
+                startingY = 0;
+                endingX = 1;
+                endingY = 2;
+                break;
         }
 
         LinearLayout.LayoutParams boxParams = new LinearLayout.LayoutParams(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -264,13 +288,13 @@ public class Play extends AppCompatActivity {
                                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText(boxes[i2][j2].getText().toString());
                                 if(boxActions[i2][j2].equals(getString(R.string.block))) {
                                     if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
-                                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox_greenborder);
+                                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox_orangeborder);
                                     } else {
                                         boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox);
                                     }
                                 } else {
                                     if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
-                                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
                                     } else {
                                         boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                                     }
@@ -286,7 +310,7 @@ public class Play extends AppCompatActivity {
                             } else {
                                 if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
                                     boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText(getString(R.string.start));
-                                    boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                                    boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
                                 } else {
                                     boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
                                     boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
@@ -320,9 +344,9 @@ public class Play extends AppCompatActivity {
 
                         if(i2 == startingY && j2 == startingX) {
                             if(currentActionSelected.equals(getString(R.string.block))) {
-                                boxes[i2][j2].setBackgroundResource(R.drawable.custom_graycoloredbox_greenborder);
+                                boxes[i2][j2].setBackgroundResource(R.drawable.custom_graycoloredbox_orangeborder);
                             } else {
-                                boxes[i2][j2].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                                boxes[i2][j2].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
                             }
                         } else {
                             if(currentActionSelected.equals(getString(R.string.block))) {
@@ -366,9 +390,6 @@ public class Play extends AppCompatActivity {
                         for (int i1 = 0; i1 < boxes.length; i1++) {
                             for (int j1 = 0; j1 < boxes[0].length; j1++) {
                                 boxes[i1][j1].setEnabled(false);
-                                /*if(i1 != endingY || j1 != endingX) {
-                                    boxes[i1][j1].setText("");
-                                }*/
 
                                 if(!boxActions[i1][j1].equals("") && !boxActions[i1][j1].equals(getString(R.string.block)) && !boxActions[i1][j1].equals(getString(R.string.target))) {
                                     totalActionsUsed++;
@@ -429,7 +450,14 @@ public class Play extends AppCompatActivity {
                 optionsLength = 3;
                 break;
             case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
                 optionsLength = 9;
+                break;
+            case 17:
+                optionsLength = 8;
                 break;
         }
 
@@ -486,7 +514,7 @@ public class Play extends AppCompatActivity {
                             nums[currentNumOptionRowIndex][currentNumOptionColIndex] = -1;
                             if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
                                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText(getString(R.string.start));
-                                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                                boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
                             } else {
                                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setText("");
                                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
@@ -549,7 +577,7 @@ public class Play extends AppCompatActivity {
         levels();
 
         for(int i = 0; i < options.length; i++) {
-            if(!optionsAction.equals(getString(R.string.block))) {
+            if(!optionsAction[i].equals(getString(R.string.block))) {
                 totalJumps += optionNums[i];
             }
         }
@@ -573,9 +601,17 @@ public class Play extends AppCompatActivity {
                     }
                 } else {
                     if(currentActionSelected.equals(getString(R.string.block))) {
-                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox);
+                        if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox_orangeborder);
+                        } else {
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_graycoloredbox);
+                        }
                     } else {
-                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
+                        if(currentNumOptionRowIndex == startingY && currentNumOptionColIndex == startingX) {
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
+                        } else {
+                            boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
+                        }
                     }
                 }
 
@@ -590,11 +626,15 @@ public class Play extends AppCompatActivity {
     }
 
     public void startTimer() {
-        timer = new CountDownTimer(1500 * totalJumps, 1000) {
+        timer = new CountDownTimer(1500L * totalJumps, 1000) {
             @Override
             public void onTick(long l) {
                 if(previousCurrentNumOptionRowIndex != -1 && previousCurrentNumOptionColIndex != -1) {
-                    boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
+                    if(previousCurrentNumOptionRowIndex == endingY && previousCurrentNumOptionColIndex == endingX) {
+                        boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                    } else {
+                        boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
+                    }
                 }
 
                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_bluecoloredbox);
@@ -607,6 +647,8 @@ public class Play extends AppCompatActivity {
                 previousCurrentNumOptionColIndex = currentNumOptionColIndex;
 
                 if(puzzleSolved) {
+                    boxes[endingY][endingX].setTextColor(Color.WHITE);
+                    boxes[endingY][endingX].setBackgroundResource(R.drawable.custom_greencoloredbox_darkgreenborder);
                     timer.onFinish();
                 } else {
                     if (currentAction - 1 >= 0) {
@@ -758,10 +800,9 @@ public class Play extends AppCompatActivity {
                 } else {
                     boxes[i][j].setEnabled(true);
                     boxes[i][j].setText("");
+                    boxes[i][j].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                     boxActions[i][j] = "";
                 }
-
-                boxes[i][j].setBackgroundResource(R.drawable.custom_whitecoloredbox);
 
                 nums[i][j] = -1;
             }
@@ -784,268 +825,182 @@ public class Play extends AppCompatActivity {
 
     public void setTargetPosition() {
         boxes[endingY][endingX].setText(getString(R.string.end));
+        boxes[endingY][endingX].setTextColor(Color.BLACK);
+        boxes[endingY][endingX].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
         boxes[endingY][endingX].setEnabled(false);
         boxActions[endingY][endingX] = getString(R.string.target);
     }
 
     public void levels() {
         boxes[startingY][startingX].setText(getString(R.string.start));
-        boxes[startingY][startingX].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+        boxes[startingY][startingX].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
 
         switch (currentLevel) {
-            case 1:                                                             //1
-                optionNums[0] = 2;
-                options[0].setText(optionNums[0] + getString(R.string.d));
-                optionsAction[0] = getString(R.string.down);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.r));
-                optionsAction[1] = getString(R.string.right);
+            case 1:                                                                                 //1
+                assignAction(0, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.r), getString(R.string.right));
                 break;
-            case 2:                                                             //2
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.r));
-                optionsAction[0] = getString(R.string.right);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.u));
-                optionsAction[1] = getString(R.string.up);
+            case 2:                                                                                 //2
+                assignAction(0, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 1, getString(R.string.u), getString(R.string.up));
                 break;
-            case 3:                                                             //3
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.d));
-                optionsAction[0] = getString(R.string.down);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.u));
-                optionsAction[1] = getString(R.string.up);
-
-                optionNums[2] = 1;
-                options[2].setText(optionNums[2] + getString(R.string.l));
-                optionsAction[2] = getString(R.string.left);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.l));
-                optionsAction[3] = getString(R.string.left);
+            case 3:                                                                                 //3
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(2, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.l), getString(R.string.left));
                 break;
-            case 4:                                                             //4
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.u));
-                optionsAction[0] = getString(R.string.up);
-
-                optionNums[1] = 2;
-                options[1].setText(optionNums[1] + getString(R.string.l));
-                optionsAction[1] = getString(R.string.left);
-
-                optionNums[2] = 1;
-                options[2].setText(optionNums[2] + getString(R.string.r));
-                optionsAction[2] = getString(R.string.right);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.l));
-                optionsAction[3] = getString(R.string.left);
+            case 4:                                                                                 //4
+                assignAction(0, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(1, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.l), getString(R.string.left));
                 break;
-            case 5:                                                             //5
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.u));
-                optionsAction[0] = getString(R.string.up);
-
-                optionNums[1] = 2;
-                options[1].setText(optionNums[1] + getString(R.string.r));
-                optionsAction[1] = getString(R.string.right);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.d));
-                optionsAction[2] = getString(R.string.down);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.l));
-                optionsAction[3] = getString(R.string.left);
-
-                optionNums[4] = 1;
-                options[4].setText(optionNums[4] + getString(R.string.l));
-                optionsAction[4] = getString(R.string.left);
-
-                optionNums[5] = 1;
-                options[5].setText(optionNums[5] + getString(R.string.u));
-                optionsAction[5] = getString(R.string.up);
-
-                optionNums[6] = 2;
-                options[6].setText(optionNums[6] + getString(R.string.r));
-                optionsAction[6] = getString(R.string.right);
+            case 5:                                                                                 //5
+                assignAction(0, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(4, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(6, 2, getString(R.string.r), getString(R.string.right));
                 break;
-            case 6:                                                             //6
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.r));
-                optionsAction[0] = getString(R.string.right);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.u));
-                optionsAction[1] = getString(R.string.up);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.l));
-                optionsAction[2] = getString(R.string.left);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.r));
-                optionsAction[3] = getString(R.string.right);
-
-                optionNums[4] = 2;
-                options[4].setText(optionNums[4] + getString(R.string.d));
-                optionsAction[4] = getString(R.string.down);
+            case 6:                                                                                 //6
+                assignAction(0, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(1, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(2, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(4, 2, getString(R.string.d), getString(R.string.down));
                 break;
-            case 7:                                                             //7
-                optionNums[0] = 2;
-                options[0].setText(optionNums[0] + getString(R.string.d));
-                optionsAction[0] = getString(R.string.down);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.l));
-                optionsAction[1] = getString(R.string.left);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.l));
-                optionsAction[2] = getString(R.string.left);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.u));
-                optionsAction[3] = getString(R.string.up);
-
-                optionNums[4] = 1;
-                options[4].setText(optionNums[4] + getString(R.string.r));
-                optionsAction[4] = getString(R.string.right);
-
-                optionNums[5] = 3;
-                options[5].setText(optionNums[5] + getString(R.string.r));
-                optionsAction[5] = getString(R.string.right);
+            case 7:                                                                                 //7
+                assignAction(0, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 3, getString(R.string.r), getString(R.string.right));
                 break;
-            case 8:
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.u));
-                optionsAction[0] = getString(R.string.up);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.r));
-                optionsAction[1] = getString(R.string.right);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.d));
-                optionsAction[2] = getString(R.string.down);
-
-                optionNums[3] = 2;
-                options[3].setText(optionNums[3] + getString(R.string.r));
-                optionsAction[3] = getString(R.string.right);
-
-                optionNums[4] = 1;
-                options[4].setText(optionNums[4] + getString(R.string.r));
-                optionsAction[4] = getString(R.string.right);
-
-                optionNums[5] = 2;
-                options[5].setText(optionNums[5] + getString(R.string.l));
-                optionsAction[5] = getString(R.string.left);
+            case 8:                                                                                 //8
+                assignAction(0, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(1, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(4, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
                 break;
-            case 9:
-                optionNums[0] = 1;
-                options[0].setText(optionNums[0] + getString(R.string.d));
-                optionsAction[0] = getString(R.string.down);
-
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.l));
-                optionsAction[1] = getString(R.string.left);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.d));
-                optionsAction[2] = getString(R.string.down);
-
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.l));
-                optionsAction[3] = getString(R.string.left);
-
-                optionNums[4] = 2;
-                options[4].setText(optionNums[4] + getString(R.string.u));
-                optionsAction[4] = getString(R.string.up);
-
-                optionNums[5] = 1;
-                options[5].setText(optionNums[5] + getString(R.string.d));
-                optionsAction[5] = getString(R.string.down);
+            case 9:                                                                                 //9
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(4, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(5, 1, getString(R.string.d), getString(R.string.down));
                 break;
-            case 10:                                                            //10
-                optionNums[0] = 0;
-                options[0].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[0] = getString(R.string.block);
-
-                optionNums[1] = 9;
-                options[1].setText(optionNums[1] + getString(R.string.r));
-                optionsAction[1] = getString(R.string.right);
-
-                optionNums[2] = 1;
-                options[2].setText(optionNums[2] + getString(R.string.d));
-                optionsAction[2] = getString(R.string.down);
+            case 10:                                                                                //10
+                assignAction(0, 0, "", getString(R.string.block));
+                assignAction(1, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 1, getString(R.string.d), getString(R.string.down));
                 break;
-            case 11:
-                optionNums[0] = 3;
-                options[0].setText(optionNums[0] + getString(R.string.u));
-                optionsAction[0] = getString(R.string.up);
-
-                optionNums[1] = 2;
-                options[1].setText(optionNums[1] + getString(R.string.r));
-                optionsAction[1] = getString(R.string.right);
-
-                optionNums[2] = 2;
-                options[2].setText(optionNums[2] + getString(R.string.r));
-                optionsAction[2] = getString(R.string.right);
-
-                optionNums[3] = 0;
-                options[3].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[3] = getString(R.string.block);
-
-                optionNums[4] = 0;
-                options[4].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[4] = getString(R.string.block);
-
-                optionNums[5] = 0;
-                options[5].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[5] = getString(R.string.block);
+            case 11:                                                                                //11
+                assignAction(0, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 0, "", getString(R.string.block));
+                assignAction(4, 0, "", getString(R.string.block));
+                assignAction(5, 0, "", getString(R.string.block));
                 break;
-            case 12:
-                optionNums[0] = 3;
-                options[0].setText(optionNums[0] + getString(R.string.r));
-                optionsAction[0] = getString(R.string.right);
+            case 12:                                                                                //12
+                assignAction(0, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
+            case 13:                                                                                //13
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 3, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
+            case 14:                                                                                //14
+                assignAction(0, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(5, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(6, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
+            case 15:                                                                                //15
+                assignAction(0, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
+            case 16:                                                                                //16
+                nums[1][2] = 2;
+                boxes[1][2].setText(nums[1][2] + getString(R.string.l));
+                boxes[1][2].setEnabled(false);
+                boxActions[1][2] = getString(R.string.left);
 
-                optionNums[1] = 1;
-                options[1].setText(optionNums[1] + getString(R.string.d));
-                optionsAction[1] = getString(R.string.down);
+                assignAction(0, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(7, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
+            case 17:                                                                                //17
+                nums[1][1] = 2;
+                boxes[1][1].setText("");
+                boxes[1][1].setBackgroundResource(R.drawable.custom_graycoloredbox);
+                boxes[1][1].setEnabled(false);
+                boxActions[1][1] = getString(R.string.block);
 
-                optionNums[2] = 1;
-                options[2].setText(optionNums[2] + getString(R.string.d));
-                optionsAction[2] = getString(R.string.down);
+                assignAction(0, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(5, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(6, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 1, getString(R.string.l), getString(R.string.left));
+                break;
+            case 18:                                                                                //18
 
-                optionNums[3] = 1;
-                options[3].setText(optionNums[3] + getString(R.string.d));
-                optionsAction[3] = getString(R.string.down);
-
-                optionNums[4] = 2;
-                options[4].setText(optionNums[4] + getString(R.string.r));
-                optionsAction[4] = getString(R.string.right);
-
-                optionNums[5] = 2;
-                options[5].setText(optionNums[5] + getString(R.string.l));
-                optionsAction[5] = getString(R.string.left);
-
-                optionNums[6] = 2;
-                options[6].setText(optionNums[6] + getString(R.string.u));
-                optionsAction[6] = getString(R.string.up);
-
-                optionNums[7] = 0;
-                options[7].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[7] = getString(R.string.block);
-
-                optionNums[8] = 0;
-                options[8].setBackgroundResource(R.drawable.custom_graycoloredbox);
-                optionsAction[8] = getString(R.string.block);
                 break;
         }
+    }
+
+    public void assignAction(int index, int action, String actionFirstLetter, String actionFullName) {
+        optionNums[index] = action;
+        if(actionFullName.equals(getString(R.string.block))) {
+            options[index].setText("");
+            options[index].setBackgroundResource(R.drawable.custom_graycoloredbox);
+        } else {
+            String str = (action + "").concat(actionFirstLetter);
+            options[index].setText(str);
+        }
+        optionsAction[index] = actionFullName;
     }
 
 }
