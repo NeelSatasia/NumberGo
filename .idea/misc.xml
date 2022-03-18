@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/custom_redcoloredbox.xml" value="0.2445" />
         <entry key="app/src/main/res/drawable/custom_bluecoloredbox.xml" value="0.275" />
         <entry key="app/src/main/res/drawable/custom_graycoloredbox.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/custom_graycoloredbox_blueborder.xml" value="0.2555" />

@@ -52,7 +52,7 @@ public class Levels extends AppCompatActivity {
         relLay.addView(levelsLabel, levelsLabelParams);
 
         grid = new GridLayout(this);
-        grid.setRowCount(15);
+        grid.setRowCount(10);
         grid.setColumnCount(3);
         grid.setId(View.generateViewId());
 
@@ -68,6 +68,9 @@ public class Levels extends AppCompatActivity {
                 levels[i][j].setTextSize(25);
                 levels[i][j].setTextColor(Color.WHITE);
                 levels[i][j].setBackgroundResource(R.drawable.custom_level_bg);
+                if(level > 1) {
+                    levels[i][j].setAlpha(0.3f);
+                }
 
                 if (i > 0) {
                     levelParams.topMargin = 50;

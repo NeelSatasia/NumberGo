@@ -48,6 +48,8 @@ public class Play extends AppCompatActivity {
     int currentNumSelected;
     String currentActionSelected;
 
+    boolean containsStartingPosition;
+
     int startingX;
     int startingY;
     int endingX;
@@ -142,6 +144,14 @@ public class Play extends AppCompatActivity {
         nums = new int[gridLayout.getRowCount()][gridLayout.getColumnCount()];
         boxes = new Button[gridLayout.getRowCount()][gridLayout.getColumnCount()];
         boxActions = new String[gridLayout.getRowCount()][gridLayout.getColumnCount()];
+
+        if(currentLevel > 20) {
+            containsStartingPosition = false;
+            startingX = -1;
+            startingY = -1;
+        } else {
+            containsStartingPosition = true;
+        }
 
         switch(currentLevel) {
             case 1:
@@ -241,6 +251,53 @@ public class Play extends AppCompatActivity {
                 endingX = 1;
                 endingY = 2;
                 break;
+            case 18:
+                startingX = 0;
+                startingY = 3;
+                endingX = 2;
+                endingY = 3;
+                break;
+            case 19:
+                startingX = 0;
+                startingY = 0;
+                endingX = 1;
+                endingY = 2;
+                break;
+            case 20:
+                startingX = 0;
+                startingY = 2;
+                endingX = 3;
+                endingY = 1;
+                break;
+            case 21:
+                endingX = 2;
+                endingY = 2;
+                break;
+            case 22:
+            case 26:
+                endingX = 1;
+                endingY = 2;
+                break;
+            case 23:
+                endingX = 2;
+                endingY = 0;
+                break;
+            case 24:
+                endingX = 3;
+                endingY = 3;
+                break;
+            case 25:
+                endingX = 3;
+                endingY = 2;
+                break;
+            case 27:
+                endingX = 2;
+                endingY = 3;
+                break;
+            case 28:
+                endingX = 2;
+                endingY = 1;
+                break;
         }
 
         LinearLayout.LayoutParams boxParams = new LinearLayout.LayoutParams(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -249,7 +306,7 @@ public class Play extends AppCompatActivity {
             for(int j = 0; j < boxes[0].length; j++) {
                 nums[i][j] = -1;
                 boxes[i][j] = new Button(this);
-                boxes[i][j].setTextSize(20);
+                boxes[i][j].setTextSize(18);
                 boxes[i][j].setTextColor(Color.rgb(51, 51, 51));
                 boxes[i][j].setAllCaps(false);
                 boxActions[i][j] = "";
@@ -377,7 +434,7 @@ public class Play extends AppCompatActivity {
                 });
 
                 boxes[i][j].setOnLongClickListener(view -> {
-                    if(optionsUsed == optionsLength && i2 == startingY && j2 == startingX && !boxes[i2][j2].getText().toString().equals(getString(R.string.start)) && !boxActions[i2][j2].equals(getString(R.string.block))) {
+                    if(optionsUsed == optionsLength && ((i2 == startingY && j2 == startingX && !boxes[i2][j2].getText().toString().equals(getString(R.string.start))) || !containsStartingPosition) && !boxActions[i2][j2].equals(getString(R.string.block))) {
                         if(isNumSelected) {
                             isNumSelected = false;
                             if(boxActions[currentNumOptionRowIndex][currentNumOptionColIndex].equals(getString(R.string.block))) {
@@ -432,9 +489,11 @@ public class Play extends AppCompatActivity {
                 break;
             case 3:
             case 4:
+            case 21:
                 optionsLength = 4;
                 break;
             case 5:
+            case 27:
                 optionsLength = 7;
                 break;
             case 6:
@@ -454,10 +513,23 @@ public class Play extends AppCompatActivity {
             case 14:
             case 15:
             case 16:
+            case 19:
+            case 28:
                 optionsLength = 9;
                 break;
             case 17:
+            case 25:
+            case 26:
                 optionsLength = 8;
+                break;
+            case 18:
+            case 23:
+            case 24:
+                optionsLength = 11;
+                break;
+            case 20:
+            case 22:
+                optionsLength = 10;
                 break;
         }
 
@@ -477,7 +549,7 @@ public class Play extends AppCompatActivity {
 
         for(int i = 0; i < options.length; i++) {
             options[i] = new Button(this);
-            options[i].setTextSize(20);
+            options[i].setTextSize(18);
             options[i].setBackgroundResource(R.drawable.custom_whitecoloredbox);
 
             numOptionsGrid.addView(options[i], numOptionsParams);
@@ -632,6 +704,8 @@ public class Play extends AppCompatActivity {
                 if(previousCurrentNumOptionRowIndex != -1 && previousCurrentNumOptionColIndex != -1) {
                     if(previousCurrentNumOptionRowIndex == endingY && previousCurrentNumOptionColIndex == endingX) {
                         boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_greenborder);
+                    } else if (containsStartingPosition && previousCurrentNumOptionRowIndex == startingY && previousCurrentNumOptionColIndex == startingX) {
+                        boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
                     } else {
                         boxes[previousCurrentNumOptionRowIndex][previousCurrentNumOptionColIndex].setBackgroundResource(R.drawable.custom_whitecoloredbox);
                     }
@@ -640,6 +714,10 @@ public class Play extends AppCompatActivity {
                 boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_bluecoloredbox);
 
                 if(failedToSolvePuzzle) {
+                    if(currentNumOptionRowIndex == endingY && currentNumOptionColIndex == endingX) {
+                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setBackgroundResource(R.drawable.custom_redcoloredbox);
+                        boxes[currentNumOptionRowIndex][currentNumOptionColIndex].setTextColor(Color.WHITE);
+                    }
                     timer.onFinish();
                 }
 
@@ -832,8 +910,10 @@ public class Play extends AppCompatActivity {
     }
 
     public void levels() {
-        boxes[startingY][startingX].setText(getString(R.string.start));
-        boxes[startingY][startingX].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
+        if(containsStartingPosition) {
+            boxes[startingY][startingX].setText(getString(R.string.start));
+            boxes[startingY][startingX].setBackgroundResource(R.drawable.custom_whitecoloredbox_orangeborder);
+        }
 
         switch (currentLevel) {
             case 1:                                                                                 //1
@@ -986,7 +1066,145 @@ public class Play extends AppCompatActivity {
                 assignAction(7, 1, getString(R.string.l), getString(R.string.left));
                 break;
             case 18:                                                                                //18
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 3, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(6, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(8, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(9, 0, "", getString(R.string.block));
+                assignAction(10, 0, "", getString(R.string.block));
+                break;
+            case 19:                                                                                //19
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(2, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 0, "", getString(R.string.down));
+                assignAction(7, 0, "", getString(R.string.down));
+                assignAction(8, 0, "", getString(R.string.down));
+                break;
+            case 20:                                                                                //20
+                nums[0][2] = 0;
+                boxes[0][2].setText("");
+                boxes[0][2].setBackgroundResource(R.drawable.custom_graycoloredbox);
+                boxes[0][2].setEnabled(false);
+                boxActions[0][2] = getString(R.string.block);
 
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(2, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(3, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(4, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(5, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(7, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(8, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(9, 1, getString(R.string.u), getString(R.string.up));
+                break;
+            case 21:                                                                                //21
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.r), getString(R.string.right));
+                break;
+            case 22:                                                                                //22
+                assignAction(0, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(4, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
+                assignAction(9, 0, "", getString(R.string.block));
+                break;
+            case 23:                                                                                //23
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(8, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(9, 0, "", getString(R.string.block));
+                assignAction(10, 0, "", getString(R.string.block));
+                break;
+            case 24:                                                                                //24
+                assignAction(0, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(7, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(8, 0, "", getString(R.string.block));
+                assignAction(9, 0, "", getString(R.string.block));
+                assignAction(10, 0, "", getString(R.string.block));
+                break;
+            case 25:                                                                                //25
+                nums[0][0] = 1;
+                boxes[0][0].setText(nums[0][0] + getString(R.string.d));
+                boxes[0][0].setEnabled(false);
+                boxActions[0][0] = getString(R.string.down);
+
+                nums[1][1] = 1;
+                boxes[1][1].setText(nums[0][0] + getString(R.string.d));
+                boxes[1][1].setEnabled(false);
+                boxActions[1][1] = getString(R.string.down);
+
+                nums[2][0] = 1;
+                boxes[2][0].setText(nums[0][0] + getString(R.string.d));
+                boxes[2][0].setEnabled(false);
+                boxActions[2][0] = getString(R.string.down);
+
+                assignAction(0, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(1, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(2, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(7, 2, getString(R.string.r), getString(R.string.right));
+                break;
+            case 26:                                                                                //26
+                assignAction(0, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(1, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(3, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(4, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 0, "", getString(R.string.block));
+                break;
+            case 27:                                                                                //27
+                assignAction(0, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 3, getString(R.string.d), getString(R.string.down));
+                assignAction(2, 1, getString(R.string.l), getString(R.string.left));
+                assignAction(3, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(4, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(5, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 1, getString(R.string.d), getString(R.string.down));
+                break;
+            case 28:                                                                                //28
+                assignAction(0, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(1, 3, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 3, getString(R.string.u), getString(R.string.up));
+                assignAction(3, 3, getString(R.string.r), getString(R.string.right));
+                assignAction(4, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(5, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(7, 0, "", getString(R.string.block));
+                assignAction(8, 0, "", getString(R.string.block));
                 break;
         }
     }
