@@ -3,6 +3,7 @@ package com.puzzlegame.numbergo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.security.interfaces.RSAKey;
 
 public class Play extends AppCompatActivity {
     ScrollView scrlView;
@@ -298,6 +301,14 @@ public class Play extends AppCompatActivity {
                 endingX = 2;
                 endingY = 1;
                 break;
+            case 29:
+                endingX = 0;
+                endingY = 2;
+                break;
+            case 30:
+                endingX = 0;
+                endingY = 1;
+                break;
         }
 
         LinearLayout.LayoutParams boxParams = new LinearLayout.LayoutParams(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -515,6 +526,7 @@ public class Play extends AppCompatActivity {
             case 16:
             case 19:
             case 28:
+            case 30:
                 optionsLength = 9;
                 break;
             case 17:
@@ -525,6 +537,7 @@ public class Play extends AppCompatActivity {
             case 18:
             case 23:
             case 24:
+            case 29:
                 optionsLength = 11;
                 break;
             case 20:
@@ -831,6 +844,11 @@ public class Play extends AppCompatActivity {
 
                 if(puzzleSolved) {
                     toast.setView(levelCompleteLayout);
+
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.levels_data), MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt(getString(R.string.levels_available), currentLevel + 1).commit();
+                    editor.apply();
                 } else if(failedToSolvePuzzle) {
                     toast.setView(tryAgainLayout);
                 }
@@ -1206,6 +1224,30 @@ public class Play extends AppCompatActivity {
                 assignAction(7, 0, "", getString(R.string.block));
                 assignAction(8, 0, "", getString(R.string.block));
                 break;
+            case 29:
+                assignAction(0, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 1, getString(R.string.u), getString(R.string.up));
+                assignAction(2, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(3, 1, getString(R.string.d), getString(R.string.down));
+                assignAction(4, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(5, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(6, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(8, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(9, 0, "", getString(R.string.block));
+                assignAction(10, 0, "", getString(R.string.block));
+                break;
+            case 30:
+                assignAction(0, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(1, 3, getString(R.string.l), getString(R.string.left));
+                assignAction(2, 2, getString(R.string.u), getString(R.string.up));
+                assignAction(3, 2, getString(R.string.l), getString(R.string.left));
+                assignAction(4, 1, getString(R.string.r), getString(R.string.right));
+                assignAction(5, 2, getString(R.string.d), getString(R.string.down));
+                assignAction(6, 3, getString(R.string.l), getString(R.string.left));
+                assignAction(7, 2, getString(R.string.r), getString(R.string.right));
+                assignAction(8, 0, "", getString(R.string.block));
+                break;
         }
     }
 
@@ -1221,4 +1263,11 @@ public class Play extends AppCompatActivity {
         optionsAction[index] = actionFullName;
     }
 
+    @Override
+    public void onBackPressed() {
+        this.finish();
+
+        Intent intent = new Intent(this, Levels.class);
+        startActivity(intent);
+    }
 }

@@ -24,18 +24,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/levels"
-            android:layout_marginTop="30dp"
+            android:text="@string/play"
+            android:layout_marginTop="20dp"
             android:onClick="goToLevels"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/store"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings"/>
     </LinearLayout>
 </RelativeLayout>

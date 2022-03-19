@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -36,6 +37,7 @@ public class Levels extends AppCompatActivity {
         scrlView = new ScrollView(this);
 
         relLay = new RelativeLayout(this);
+        relLay.setPadding(0, 20, 0, 70);
         scrlView.addView(relLay);
 
         levelsLabel = new TextView(this);
@@ -61,6 +63,9 @@ public class Levels extends AppCompatActivity {
 
         RelativeLayout.LayoutParams levelParams = new RelativeLayout.LayoutParams(150, 140);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.levels_data), MODE_PRIVATE);
+        int maxAvailableLevel = sharedPreferences.getInt(getString(R.string.levels_available), 1);
+
         for(int i = 0; i < levels.length; i++) {
             for(int j = 0; j < levels[0].length; j++) {
                 levels[i][j] = new Button(this);
@@ -68,8 +73,10 @@ public class Levels extends AppCompatActivity {
                 levels[i][j].setTextSize(25);
                 levels[i][j].setTextColor(Color.WHITE);
                 levels[i][j].setBackgroundResource(R.drawable.custom_level_bg);
-                if(level > 1) {
+
+                if(level > maxAvailableLevel) {
                     levels[i][j].setAlpha(0.3f);
+                    levels[i][j].setEnabled(false);
                 }
 
                 if (i > 0) {
